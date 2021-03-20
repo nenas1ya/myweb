@@ -12,15 +12,14 @@ body {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background: #000;
-  background-image: url(pic/purple-370132.png) ;
+  background-image: url(pic/purple-370132.png);
 }
+
 .window{
 	width: 30%;
 	min-width: 270px;
 	display: flex;
 	flex-direction: column;
-	#justify-content: center;
 	align-content: center;
 	align-items: center;
 	margin: 0 15px;
@@ -28,14 +27,12 @@ body {
 	border-radius: 10px;
 }
 
-
 .window>form{
-	margin-top: 30px;
 	display: flex;
 	flex-direction: column;
-	#justify-content: center;
 	align-content: center;
 	align-items: center;
+	margin-top: 30px;
 }
 
 
@@ -43,17 +40,16 @@ body {
 	width: 200px;
 	margin: 5px 50px;
 	padding: 3px;
-	#border: 3px solid #111;
+	color: inherit;
 }
 
 .log{
-	background-color: rgba(140, 90, 115, 1);
+	background-color: rgba(140, 90, 115, 0.9);
 	z-index: 1;
 }
 
 .reg{
-	/*width: 281px;*/
-	background-color: rgba(74, 61, 92, 1);
+	background-color: rgba(74, 61, 92, 0.9);
 	border-top: 0;
 	margin-top: -15px;
 	z-index: 0;
@@ -74,22 +70,27 @@ body {
 	border: #fff 3px solid;
 	border-radius: 5px;
 	box-shadow: 0px 0px 0px 0px #fff;
-  transition: box-shadow 0.2s linear;
+  transition: box-shadow 0.75s linear;
 	margin: 5px 50px;
 	padding: 1px;
 	width: 213px;
 	margin-bottom: 25px;
 }
 
-.border-button:hover{
+
+
+.reg .border-button:hover{
 	animation: buttonBorder 1s ease forwards;
-	box-shadow: 0px 0px 0px 2px #fff;
+	box-shadow: 0px 0px 0px 4px rgb(140, 90, 115);
+}
+
+.log .border-button:hover{
+	animation: buttonBorder 1s ease forwards;
+	box-shadow: 0px 0px 0px 4px rgb(74, 61, 92);
 }
 
 
-a:link {  text-decoration: none;}
-a:visited { text-decoration: none; color: #fff}
-a:active { text-decoration: none; }
-a:hover {
-    text-decoration: none;
-     }
+a:link{text-decoration: none;}
+a:visited{text-decoration: none; color: #fff}
+a:active{text-decoration: none}
+a:hover{text-decoration: none}
