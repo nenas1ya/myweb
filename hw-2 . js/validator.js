@@ -14,6 +14,170 @@ class Validator {
    * @returns {boolean}
    */
   isValid(schema = {}, dataToValidate) {
-    return false;
+    console.log(schema, dataToValidate);
+    /*shema:
+          type: int, ste, bool, obj, arr
+          nullable: bool
+          anyOf: dataToValidate in [shema, shema..]
+          oneOf: dataToValidate *ones* in [shema, shema..]*/
+    let result = Boolean
+
+    //Main
+    if(schema.type == 'number'||
+    schema.type == 'string' ||
+    schema.type == 'boolean'||
+    schema.type == 'array'  ||
+    schema.type == 'object'
+    && dataToValidate != null){
+      result = true
+    } else {
+      this._errors.unshift('Unknown type')
+      result = false
+    }
+    if(dataToValidate == null){
+      if(schema.nullable == false){
+        this._errors.unshift('Value is null, but nullable false')
+        result = false
+      } else {result = true }
+    }
+    if(schema.anyOf != undefined){
+      let any = []
+      for(let i = 0; i < schema.anyOf.length; i++){
+        any.push(typeof dataToValidate == schema.anyOf[i].type)
+      }
+      if(any.includes(true)){result = true}
+      else{this._errors.unshift('None schemas are valid')
+           result = false}
+    }
+    if(schema.oneOf != undefined){
+      let one = []
+      for(let i = 0; i < schema.oneOf.length; i++){
+        let el = typeof dataToValidate == schema.oneOf[i].type
+        //^ typeof array -> object, в схеме теста два object'a,
+        // object(arr) == object(schm), как исправить не знаю
+        one.push(el)
+      }
+      let counter = 0
+      for(let i = 0; i < one.length; i++){
+        if (one[i] == true) counter++
+      }
+      if(counter == 0){
+        this._errors.unshift('None schemas are valid')
+        result = false
+      }
+      else if(counter == 1){
+        result = true
+      }
+      else{
+        this._errors.unshift('More than one shema valid for this data')
+        result = false
+      }
+    }
+
+    //Int
+    if(schema.type == 'number' && dataToValidate != null){
+      if(typeof dataToValidate != 'number') {
+        this._errors.unshift('Type is incorrect')
+        result = false
+      }
+
+      if(schema.minimum != undefined) {
+        if(dataToValidate < schema.minimum){
+          this._errors.unshift('Value is less than it can be')
+          result = false
+        }
+      }
+      if(schema.maximum != undefined) {
+        if(dataToValidate > schema.maximum){
+          this._errors.unshift('Value is greater than it can be')
+          result = false
+        }
+      }
+      if(schema.enum != undefined) {
+        if(schema.enum.includes(dataToValidate) == false){
+          this._errors.unshift('The enum does not support value')
+          result = false
+        }
+      }
+    }
+
+    //String
+    if(schema.type == 'string' && dataToValidate != null){
+      if(typeof dataToValidate != 'string'){
+        this._errors.unshift('Type is incorrect')
+        result = false
+      }
+
+      if(schema.maxLength != undefined){
+        if(dataToValidate.length > schema.maxLength){
+          this._errors.unshift('Too long string')
+          result = false
+        }
+      }
+      if(schema.minLength != undefined){
+        if(dataToValidate.length < schema.minLength){
+          this._errors.unshift('Too short string')
+          result = false
+        }
+      }
+      if(schema.pattern != undefined){
+        let reg = schema.pattern
+        if(dataToValidate.match(reg) == null){
+          this._errors.unshift('String does not match pattern')
+          result = false
+        }
+      }
+      if(schema.enum != undefined) {
+        if(schema.enum.includes(dataToValidate) == false){
+          this._errors.unshift('The enum does not support value')
+          result = false
+        }
+      }
+      if(schema.format != undefined){
+        if(schema.format == 'email'){
+          let reg = /.+@.+\..+/
+          if(dataToValidate.match(reg) != null){
+            console.log('valid email:', dataToValidate)
+          } else {
+            this._errors.unshift('Invalid mail')
+            result = false
+          }
+        }
+        if(schema.format == 'date'){
+          if(isNaN(Date.parse(dataToValidate))){
+            this._errors.unshift('Format of string is not valid')
+            result = false
+          }
+        } else {console.log('valid date:', Date.parse(dataToValidate))}
+      }
+    }
+
+    //Bool
+    if(schema.type == 'boolean' && dataToValidate != null){
+      if(typeof dataToValidate != 'boolean'){
+        this._errors.unshift('Type is incorrect')
+        result = false
+      }
+    }
+    //Arr
+    if(schema.type == 'array' && dataToValidate != null){
+      if(Array.isArray(dataToValidate)){
+        if(schema.items != undefined){
+          for(let i = 0; i < dataToValidate.length; i++){
+            console.log(typeof dataToValidate[i] == schema.items.type)
+          }
+        }
+
+      } else {
+        this._errors.unshift('Type is incorrect')
+        result = false}
+    }
+
+
+
+
+
+    console.log('err:',this._errors)
+  return result
   }
 }
