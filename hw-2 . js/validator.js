@@ -53,8 +53,8 @@ class Validator {
       let one = []
       for(let i = 0; i < schema.oneOf.length; i++){
         let el = typeof dataToValidate == schema.oneOf[i].type
-        //^ typeof array -> object, в схеме теста два object'a,
-        // object(arr) == object(schm), как исправить не знаю
+                  && !Array.isArray(dataToValidate)
+        //^ typeof array -> object
         one.push(el)
       }
       let counter = 0
@@ -164,10 +164,57 @@ class Validator {
       if(Array.isArray(dataToValidate)){
         if(schema.items != undefined){
           for(let i = 0; i < dataToValidate.length; i++){
-            console.log(typeof dataToValidate[i] == schema.items.type)
+            if(schema.items.length > 1){
+              console.log(schema.items[i].type)
+            } else if(typeof dataToValidate[i] != schema.items.type){
+                this._errors.unshift('Type is incorrect')
+                result = false
+              }
           }
         }
+        if(schema.maxItems != undefined){
+          if(dataToValidate.length > schema.maxItems){
+            this._errors.unshift('Items count more than can be')
+            result = false
+          }
+        }
+        if(schema.minItems != undefined){
+          if(dataToValidate.length < schema.minItems){
+            this._errors.unshift('Items count less than can be')
+            result = false
+          }
 
+        }
+        if(schema.contains != undefined){
+          if(!dataToValidate.includes(schema.contains)){
+            this._errors.unshift('Must contain a value, but does not')
+            result = false
+          }
+        }
+        if(schema.uniqueItems != undefined && schema.uniqueItems == true){
+          let onlyones = []
+          for(let i = 0; i < dataToValidate.length; i++){
+            if(typeof dataToValidate[i] == 'object'){
+              for(let j = 0; j < onlyones.length; j++){
+                if(dataToValidate[i].toJSON == onlyones[j].toJSON){
+                  this._errors.unshift('Elements of array not unique')
+                }
+              }
+              //^ошибки
+              //
+              //
+              //
+              //
+            } else if(onlyones.includes(dataToValidate[i])){
+
+              this._errors.unshift('Elements of array not unique')
+              result = false
+            } else {
+              onlyones.push(dataToValidate[i])
+            }
+          }
+          console.log(onlyones);
+        }
       } else {
         this._errors.unshift('Type is incorrect')
         result = false}
