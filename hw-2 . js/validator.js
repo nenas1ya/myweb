@@ -192,28 +192,27 @@ class Validator {
           }
         }
         if(schema.uniqueItems != undefined && schema.uniqueItems == true){
-          let onlyones = []
+          console.log(dataToValidate)
+          let ones = []
           for(let i = 0; i < dataToValidate.length; i++){
-            if(typeof dataToValidate[i] == 'object'){
-              for(let j = 0; j < onlyones.length; j++){
-                if(dataToValidate[i].toJSON == onlyones[j].toJSON){
-                  this._errors.unshift('Elements of array not unique')
-                }
-              }
-              //^ошибки
-              //
-              //
-              //
-              //
-            } else if(onlyones.includes(dataToValidate[i])){
-
+            if(ones.includes(dataToValidate[i])){
               this._errors.unshift('Elements of array not unique')
               result = false
-            } else {
-              onlyones.push(dataToValidate[i])
+            }else if(typeof dataToValidate[i] == 'object'){
+              for(let j = 0; j < ones.length; j++){
+                if(JSON.stringify(dataToValidate[i]) == JSON.stringify(ones[j])){
+                  this._errors.unshift('Elements of array not unique')
+                  result = false
+                }
+              }
             }
+            ones.push(dataToValidate[i])
           }
-          console.log(onlyones);
+        }
+        if(schema.enum != undefined && Array.isArray(dataToValidate)){
+          for(let i = 0; i < dataToValidate.length; i++){
+            console.log('pause on 214 line');
+          }
         }
       } else {
         this._errors.unshift('Type is incorrect')
