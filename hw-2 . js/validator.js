@@ -209,9 +209,27 @@ class Validator {
             ones.push(dataToValidate[i])
           }
         }
+
+
         if(schema.enum != undefined && Array.isArray(dataToValidate)){
-          for(let i = 0; i < dataToValidate.length; i++){
-            console.log('pause on 214 line');
+          let f = false
+          for(let i = 0; i < schema.enum.length; i++){
+            if(dataToValidate == schema.enum[i]){
+              f = true
+            }
+            if(typeof dataToValidate[i] == 'object'){
+              for(let j = 0; j < schema.enum.length; j++){
+                for(let k = 0; k < schema.enum[j].length; k++){
+                  if(JSON.stringify(dataToValidate[i]) == JSON.stringify(schema.enum[j][k])){
+                    f = true
+                  }
+                }
+              }
+            }
+          }
+          if (f != true){
+            this._errors.unshift('The enum does not support one of array elements')
+            result = false
           }
         }
       } else {
@@ -223,7 +241,7 @@ class Validator {
 
 
 
-    console.log('err:',this._errors)
+    console.log('ret:', result, '/', 'err:',this._errors)
   return result
   }
 }
