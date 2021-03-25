@@ -34,21 +34,26 @@ class Validator {
       this._errors.unshift('Unknown type')
       result = false
     }
+
     if(dataToValidate == null){
       if(schema.nullable == false){
         this._errors.unshift('Value is null, but nullable false')
         result = false
-      } else {result = true }
+      } else result = true
     }
+
     if(schema.anyOf != undefined){
       let any = []
       for(let i = 0; i < schema.anyOf.length; i++){
         any.push(typeof dataToValidate == schema.anyOf[i].type)
       }
       if(any.includes(true)){result = true}
-      else{this._errors.unshift('None schemas are valid')
-           result = false}
+      else {
+        this._errors.unshift('None schemas are valid')
+        result = false
+      }
     }
+
     if(schema.oneOf != undefined){
       let one = []
       for(let i = 0; i < schema.oneOf.length; i++){
@@ -81,18 +86,17 @@ class Validator {
         result = false
       }
 
-      if(schema.minimum != undefined) {
+      if(schema.minimum != undefined || schema.maximum != undefined) {
         if(dataToValidate < schema.minimum){
           this._errors.unshift('Value is less than it can be')
           result = false
         }
-      }
-      if(schema.maximum != undefined) {
         if(dataToValidate > schema.maximum){
           this._errors.unshift('Value is greater than it can be')
           result = false
         }
       }
+
       if(schema.enum != undefined) {
         if(schema.enum.includes(dataToValidate) == false){
           this._errors.unshift('The enum does not support value')
@@ -108,18 +112,17 @@ class Validator {
         result = false
       }
 
-      if(schema.maxLength != undefined){
+      if(schema.maxLength != undefined || schema.minLength != undefined){
         if(dataToValidate.length > schema.maxLength){
           this._errors.unshift('Too long string')
           result = false
         }
-      }
-      if(schema.minLength != undefined){
         if(dataToValidate.length < schema.minLength){
           this._errors.unshift('Too short string')
           result = false
         }
       }
+
       if(schema.pattern != undefined){
         let reg = schema.pattern
         if(dataToValidate.match(reg) == null){
@@ -159,6 +162,7 @@ class Validator {
         result = false
       }
     }
+
     //Arr
     if(schema.type == 'array' && dataToValidate != null){
       if(Array.isArray(dataToValidate)){
@@ -226,22 +230,59 @@ class Validator {
                 }
               }
             }
-          }
+          }// ужас
           if (f != true){
             this._errors.unshift('The enum does not support one of array elements')
             result = false
           }
         }
-      } else {
-        this._errors.unshift('Type is incorrect')
-        result = false}
+        } else {
+          this._errors.unshift('Type is incorrect')
+          result = false}
     }
 
+    //Objects
+    if( (schema.type == 'object' && dataToValidate != null) &&
+      (typeof dataToValidate != 'object' || Array.isArray(dataToValidate)) ){
+        this._errors.unshift('Type is incorrect')
+        result = false
+    } else {
+        if(schema.maxProperties != undefined || schema.minProperties != undefined){
+          let count = 0
+          for(let key in dataToValidate){
+            count++
+          }
+          if(schema.maxProperties < count){
+            this._errors.unshift('Too many properties in object')
+            result = false
+          }
+          if(schema.minProperties > count){
+            this._errors.unshift('Too few properties in object')
+            result = false
+          }
+        }
+        if(schema.required != undefined){
+          let dtvArgs = []
+          for(let key in dataToValidate){
+            dtvArgs.push(key)
+          }
+          for(let i = 0; i < schema.required.length; i++){
+            if(dtvArgs.includes(schema.required[i]) === false){
+              this._errors.unshift('Property required, but value is undefined')
+              result = false
+            }
+          }
+
+        }
+        if(schema.properties != undefined){
+            //нужно было делать проверки через функции.
+
+        }
+      }
 
 
 
-
-    console.log('ret:', result, '/', 'err:',this._errors)
+    console.log('return:', result, '/', 'errors:',this._errors)
   return result
   }
 }
