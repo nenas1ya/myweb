@@ -1,5 +1,6 @@
 class Validator {
   constructor() {
+    this._result = true;
     this._errors = [];
   }
 
@@ -13,127 +14,134 @@ class Validator {
    * @param dataToValidate
    * @returns {boolean}
    */
+
+
+
+  typeCheck(sch, dtv){
+    let type = sch.type
+    /*if(type === 'array' && Array.isArray(dtv)
+     && sch.oneOf === undefined && sch.anyOf === undefined){
+      return 'array'
+    }*/
+    if(type === typeof dtv){
+      return type
+    } else if (dtv === null) {
+      if (sch.nullable === false) {
+        return 'no null'
+      } else if (sch.nullable === true) {
+        return 'null'
+      }
+    } else if (type !== 'number' &&
+              type !== 'string'  &&
+              type !== 'array'   &&
+              type !== 'boolean' &&
+              type !== 'object') {
+      return 'unknow'
+    } else if (type !== typeof dtv) {
+      return 'incorrect'
+    }
+
+  }
+
+  bad(err) {
+     this._errors.push(err)
+     this._result = false
+  }
+
+  inEnum(sch, dtv){
+      if(sch.enum.includes(dtv)){
+        console.log('this');
+      } else {
+        return false
+      }
+    return true
+  }
+
+  anyOf(sch, dtv){
+    let any = []
+    for(let i = 0; i < sch.anyOf.length; i++){
+      any.push(this.typeCheck(sch.anyOf[i], dtv) == typeof dtv)
+    }
+    if(any.includes(true)){
+      return true
+    }
+    else {
+      return false
+    }
+  }
+
+  oneOf(sch, dtv){
+    let one = []
+    for(let i = 0; i < sch.oneOf.length; i++){
+      one.push(this.typeCheck(sch.oneOf[i], dtv) == typeof dtv)
+    }
+    let counter = 0
+    for(let i = 0; i < one.length; i++){
+      if (one[i] == true) counter++
+    }
+    return counter
+  }
+
+
   isValid(schema = {}, dataToValidate) {
-    console.log(schema, dataToValidate);
+    console.log(schema, dataToValidate)
     /*shema:
           type: int, ste, bool, obj, arr
           nullable: bool
           anyOf: dataToValidate in [shema, shema..]
           oneOf: dataToValidate *ones* in [shema, shema..]*/
-    let result = Boolean
 
-    //Main
-    if(schema.type == 'number'||
-    schema.type == 'string' ||
-    schema.type == 'boolean'||
-    schema.type == 'array'  ||
-    schema.type == 'object'
-    && dataToValidate != null){
-      result = true
-    } else {
-      this._errors.unshift('Unknown type')
-      result = false
+
+
+
+    if(this.typeCheck(schema, dataToValidate) === 'null'){
+
+    }
+    if(this.typeCheck(schema, dataToValidate) === 'no null'){
+      this.bad('Value is null, but nullable false')
+
+    }
+    if(this.typeCheck(schema, dataToValidate) === 'unknow'
+     && schema.anyOf === undefined && schema.oneOf === undefined){
+      this.bad('Unknown type')
+
+    }
+    if(this.typeCheck(schema, dataToValidate) === 'incorrect'
+     && schema.anyOf === undefined && schema.oneOf === undefined){
+      this.bad('Type is incorrect')
     }
 
-    if(dataToValidate == null){
-      if(schema.nullable == false){
-        this._errors.unshift('Value is null, but nullable false')
-        result = false
-      } else result = true
-    }
 
-    if(schema.anyOf != undefined){
-      let any = []
-      for(let i = 0; i < schema.anyOf.length; i++){
-        any.push(typeof dataToValidate == schema.anyOf[i].type)
-      }
-      if(any.includes(true)){result = true}
-      else {
-        this._errors.unshift('None schemas are valid')
-        result = false
-      }
-    }
-
-    if(schema.oneOf != undefined){
-      let one = []
-      for(let i = 0; i < schema.oneOf.length; i++){
-        let el = typeof dataToValidate == schema.oneOf[i].type
-                  && !Array.isArray(dataToValidate)
-        //^ typeof array -> object
-        one.push(el)
-      }
-      let counter = 0
-      for(let i = 0; i < one.length; i++){
-        if (one[i] == true) counter++
-      }
-      if(counter == 0){
-        this._errors.unshift('None schemas are valid')
-        result = false
-      }
-      else if(counter == 1){
-        result = true
-      }
-      else{
-        this._errors.unshift('More than one shema valid for this data')
-        result = false
-      }
-    }
-
-    //Int
-    if(schema.type == 'number' && dataToValidate != null){
-      if(typeof dataToValidate != 'number') {
-        this._errors.unshift('Type is incorrect')
-        result = false
-      }
-
+    if(this.typeCheck(schema, dataToValidate) === 'number'){
       if(schema.minimum != undefined || schema.maximum != undefined) {
-        if(dataToValidate < schema.minimum){
-          this._errors.unshift('Value is less than it can be')
-          result = false
-        }
-        if(dataToValidate > schema.maximum){
-          this._errors.unshift('Value is greater than it can be')
-          result = false
-        }
+        if(dataToValidate < schema.minimum) this.bad("Value is less than it can be")
+        if(dataToValidate > schema.maximum) this.bad("Value is greater than it can be")
       }
-
-      if(schema.enum != undefined) {
-        if(schema.enum.includes(dataToValidate) == false){
-          this._errors.unshift('The enum does not support value')
-          result = false
+      if(schema.enum != undefined){
+        if(this.inEnum(schema, dataToValidate) === false){
+          this.bad("The enum does not support value")
         }
       }
     }
-
-    //String
-    if(schema.type == 'string' && dataToValidate != null){
-      if(typeof dataToValidate != 'string'){
-        this._errors.unshift('Type is incorrect')
-        result = false
-      }
-
+    if(this.typeCheck(schema, dataToValidate) === 'string'){
       if(schema.maxLength != undefined || schema.minLength != undefined){
         if(dataToValidate.length > schema.maxLength){
-          this._errors.unshift('Too long string')
-          result = false
+          this.bad('Too long string')
         }
         if(dataToValidate.length < schema.minLength){
-          this._errors.unshift('Too short string')
-          result = false
+          this.bad('Too short string')
         }
       }
 
       if(schema.pattern != undefined){
         let reg = schema.pattern
         if(dataToValidate.match(reg) == null){
-          this._errors.unshift('String does not match pattern')
-          result = false
+          this.bad('String does not match pattern')
         }
       }
       if(schema.enum != undefined) {
-        if(schema.enum.includes(dataToValidate) == false){
-          this._errors.unshift('The enum does not support value')
-          result = false
+        if(this.inEnum(schema, dataToValidate) == false){
+          this.bad('The enum does not support value')
         }
       }
       if(schema.format != undefined){
@@ -142,26 +150,45 @@ class Validator {
           if(dataToValidate.match(reg) != null){
             console.log('valid email:', dataToValidate)
           } else {
-            this._errors.unshift('Invalid mail')
-            result = false
+            this.bad('Invalid mail')
+
           }
         }
         if(schema.format == 'date'){
           if(isNaN(Date.parse(dataToValidate))){
-            this._errors.unshift('Format of string is not valid')
-            result = false
+            this.bad('Format of string is not valid')
+
           }
         } else {console.log('valid date:', Date.parse(dataToValidate))}
       }
     }
+    if(this.typeCheck(schema, dataToValidate) === 'boolean'){
 
-    //Bool
-    if(schema.type == 'boolean' && dataToValidate != null){
-      if(typeof dataToValidate != 'boolean'){
-        this._errors.unshift('Type is incorrect')
-        result = false
+      }
+
+    if(schema.anyOf != undefined){
+      if(this.anyOf(schema, dataToValidate) == true){
+        this._result = true
+      } else {
+        this.bad('None schemas are valid')
       }
     }
+
+    if(schema.oneOf != undefined){
+      let res = this.oneOf(schema, dataToValidate)
+
+      if(res === 0) {this.bad('None schemas are valid')}
+      else if(res === 1) {}
+      else(this.bad('More than one shema valid for this data'))
+    }
+
+
+    //String
+
+
+    //Bool
+
+
 
     //Arr
     if(schema.type == 'array' && dataToValidate != null){
@@ -282,7 +309,7 @@ class Validator {
 
 
 
-    console.log('return:', result, '/', 'errors:',this._errors)
-  return result
+    console.log('return:', this._result, '/', 'errors:',this._errors)
+  return this._result
   }
 }
