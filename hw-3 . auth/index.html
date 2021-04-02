@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="style.css">
+
+	<title>Login Page</title>
+</head>
+<body>
+	<div class="container">
+		<div class="log window">
+
+			<form name="log_form">
+					<input  name="email" placeholder="Login">
+					<input type="password" name="pass" placeholder="SuperSecretPass">
+					<button type="submit"
+					 class="border-button"
+					 name="login-btn"
+					 onclick="login()"
+					 >login</button>
+			</form>
+
+		</div>
+		<div class="reg window" >
+			<form name="reg_form">
+				<input type="text" name="name" placeholder="Name">
+				<input type="email" name="email" placeholder="Email">
+				<input type="date" name="date">
+				<input type="password" name="pass" placeholder="Password">
+				<input type="password" name="passch" placeholder="Password check">
+				<button type="submit"
+				 class="border-button"
+				  name="regin-btn"
+					>Registry</button>
+			</form>
+		</div>
+
+	</div>
+	<script src="valid.js"></script>
+</body>
+</html>

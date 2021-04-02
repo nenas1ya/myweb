@@ -1,0 +1,97 @@
+body {
+	margin: 0;
+}
+
+.container {
+	font-family: Arial, Geneva, Helvetica, sans-serif;
+	height: 100vh;
+	min-height: 600px;
+	width: 100%;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+  background-image: url(pic/purple-370132.png);
+}
+
+.window{
+	width: 30%;
+	min-width: 270px;
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	align-items: center;
+	margin: 0 15px;
+	padding: 10px;
+	border-radius: 10px;
+}
+
+.window>form{
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	align-items: center;
+	margin-top: 30px;
+}
+
+
+.window>form input{
+	width: 200px;
+	margin: 5px 50px;
+	padding: 3px;
+	color: inherit;
+}
+
+.log{
+	background-color: rgba(140, 90, 115, 0.9);
+	z-index: 1;
+}
+
+.reg{
+	background-color: rgba(74, 61, 92, 0.9);
+	border-top: 0;
+	margin-top: -15px;
+	z-index: 0;
+}
+
+@keyframes buttonBorder{
+	0% {}
+	100% {color: rgba(140, 90, 115, 1);
+		background-color: #fff}
+}
+
+.border-button{
+	color: #fff;
+  background-color: inherit;
+	text-transform: uppercase;
+	align-self: center;
+	display: flex;
+	justify-content: center;
+	border: #fff 3px solid;
+	border-radius: 5px;
+	box-shadow: 0px 0px 0px 0px #fff;
+  transition: box-shadow 0.75s linear;
+
+	padding: 1px;
+	width: 217px;
+	margin: 5px 0 25px ;
+}
+
+
+
+.reg .border-button:hover{
+	animation: buttonBorder 1s ease forwards;
+	box-shadow: 0px 0px 0px 4px rgb(140, 90, 115);
+}
+
+.log .border-button:hover{
+	animation: buttonBorder 1s ease forwards;
+	box-shadow: 0px 0px 0px 4px rgb(74, 61, 92);
+}
+
+
+button:link{text-decoration: none;}
+button:visited{text-decoration: none; color: #fff}
+button:active{text-decoration: none}
+button:hover{text-decoration: none}
