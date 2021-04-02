@@ -1,4 +1,4 @@
-1358
+
 class Validator {
   constructor() {
     this._result = true;
