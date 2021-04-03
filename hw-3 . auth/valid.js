@@ -44,6 +44,7 @@ function validate(e){
   console.log('---');
   result = true
   //empty inputs
+  console.log(e.nextElementSibling);
   const inputs = []
   for(let i = 0; i<(e.form.elements.length - 1); i++){
     inputs.push(e.form.elements[i]?.value)
@@ -51,7 +52,8 @@ function validate(e){
   const empty = []
   for(let i in inputs){
     if(inputs[i] === ''){
-      console.log('empty');
+      pushE(e, 'empty')
+      //console.log('empty');
     }
   }
 
@@ -111,11 +113,12 @@ function validate(e){
         pushE(e,'invalid email')
       }
   }
+  let pass = ''
   if(e.name == 'pass'){
-    //console.log('pass');
+    pass = e.value
   }
   if(e.name == 'passch'){
-    //console.log('passch');
+    console.log(e.value == pass);
   }
   //console.log(element);
   if(result === true){

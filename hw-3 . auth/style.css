@@ -56,12 +56,14 @@ body {
 .err {
 	font-size: 12px;
 	font-family: 'Courier New', monospace;
-	width: 200px;
+	width: 180px;
+
 	height: 30px;
 	background-color: ghostwhite;
 	position: absolute;
-	left: 290px;
+	left: 270px;
 	display: flex;
+	flex-wrap: nowrap;
 	justify-content: center;
 	align-items: center;
 	visibility: visible;
