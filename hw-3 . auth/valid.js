@@ -1,109 +1,126 @@
-class User{
-  constructor() {
-    this.name = string;
-    this.email = string;
-    this.password = string;
-  }
-
-
+const logInput = document.querySelector('form[name=log_form]');
+const regInput = document.querySelector('form[name=reg_form]');
+logInput.addEventListener('input', updateValue)
+regInput.addEventListener('input', updateValue)
+let elements = document.getElementsByClassName('err')
+let buttons = document.getElementsByClassName('border-button')
+//console.log(elements);
+for(el in buttons){
+  try {
+    buttons[el].disabled = true
+  } catch{}
 
 }
 
+for(el in elements){
+  try {
+    elements[el].style.visibility = 'hidden'
+  } catch{}
 
-let loginForm = document.forms["log_form"].elements;
-function login() {
-  const params = {
-    'email': loginForm.email.value,
-    'pass': loginForm.pass.value
-  }
-  console.log(validate(params))
 }
 
-let regForm = document.forms["reg_form"].elements;
-function registry() {
-  const params = {
-    'name': regForm.name.value,
-    'email': regForm.email.value,
-    'pass': regForm.pass.value,
-    'passch': regForm.passch.value
-  }
-  console.log(validate(params))
+function pushE(element, err){
+  element.nextElementSibling.style.visibility = 'visible'
+  element.nextElementSibling.style.opacity = '1'
+  element.nextElementSibling.textContent = err
+  result = false
 }
 
+function unpush(element){
+  //element.nextElementSibling.textContent = ''
+  element.nextElementSibling.style.opacity = '0'
+  //element.nextElementSibling.style.visibility = 'hidden'
 
+}
 
-function validate(params){
-    if(params.name !== undefined){
-      const n = params.name
-      if(n.length < 8){
-        console.log('n too short');
-        return false
-      }
+function updateValue(element) {
+  const t = element.target
+  //console.log(t.value, t.name)
+  validate(t)
+  //pushE(t,t.value)
+}
 
-      if(n.match("[^!@#$%^&*()_+]" &&
-         n.match("[a-zA-Z0-9]+"))[0].length !== n.length){
-           console.log('unsupported symbols in n');
-           return false
-         }
+function validate(e){
+  console.log('---');
+  result = true
+  //empty inputs
+  const inputs = []
+  for(let i = 0; i<(e.form.elements.length - 1); i++){
+    inputs.push(e.form.elements[i]?.value)
+  }
+  const empty = []
+  for(let i in inputs){
+    if(inputs[i] === ''){
+      console.log('empty');
     }
+  }
 
-    if(params.email !== undefined){
-      let em = params.email
-      if(em.indexOf('@') == em.lastIndexOf('@') && em.indexOf('@') != -1){
-        let count = 0
-        let em_domen = em.slice(em.indexOf('@'))
-        for(let i = 0; i < em_domen.length; i++){
-            if(em_domen[i] == '.'){
-               count++
-            }
-           }
-        if(count > 1 ){
-          console.log('too many dot');
-          return false
-        }
-        if(count < 1 ){
-          console.log('too less dot');
-          return false
-        }
-        if(em.match("^[a-zA-Z0-9]") === null){
-          console.log('unsupported symbol');
-          return false
-        }
-        if(em.length < 8){
-          console.log('too short');
-          return false
-        }
-        if(em.length > 255){
-          console.log('too long');
-          return false
-        }
-
-      } else console.log('bad email');;
-
+  function tooShortLong(e,f,l){
+    if(e.name == 'pass'){
+      if(f === '>') return (e.value.length > 8)
+      if(f === '<') return (e.value.length < 64)
     }
-    if(params.pass !== undefined){
-      const p = params.pass
-      if(p.length < 8){
-        console.log('p too short');
-        return false
-      }
-      if(p.length > 255){
-        console.log('p too long');
-        return false
-      }
-      let reg = /[a-zA-Z\d!@#$%&*()_+]/g
-      if(p.match(reg)?.length !== p.length){
-        console.log('unsupported symbols in p');
-        return false
-      }
+    if(f === '>') return (e.value.length > l)
+    if(f === '<') return (e.value.length < l)
+  }
 
-    }
-
-    if(params.passch !== undefined){
-      if(params.pass !== params.passch){
-        console.log('different passwords');
-        return false
+  function acceptChar(line, pass=false){
+    if(line !== undefined){
+      let accept = ['q','w','e','r','t','y','u','i','o','p','a','s','d',
+      'f','g','h','j','k','l','z','x','c','v','b','n','m',
+      '@','_','-','.',
+      '1','2','3','4','5','6','7','8','9','0']
+      if(pass){
+        accept = ['q','w','e','r','t','y','u','i','o','p','a','s','d',
+        'f','g','h','j','k','l','z','x','c','v','b','n','m',
+        '@','^','.','&','_','/','~','-','#','$',';','%',':','?','=','+','|','\\',
+        '1','2','3','4','5','6','7','8','9','0']
+      }
+      for(let i=0; i < line.value.length; i++){
+        const acc = []
+        for(let c in accept){
+          if(line.value.toLowerCase()[i] === accept[c]){
+            acc.push(true)
+          }
+        }
+        if (acc.length === 0){
+          return line.value[i]
+        }
       }
     }
-    return params
+  }
+
+  if(!tooShortLong(e,'<',24)){
+    pushE(e,'too long')
+  }
+  if(!tooShortLong(e,'>',3)){
+    pushE(e,'too short')
+  }
+
+  if(typeof acceptChar(e,(e.name =='pass')) === 'string' ){
+    pushE(e,`unaccepteble symbol: "${acceptChar(e, (e.name =='pass'))}"`);
+  }
+  if(e.name == 'name' ){
+
+
+
+  }
+  if(e.name == 'email'){
+    let reg = /.+@.+\..+/
+    if(e.value.match(reg) === null){
+        pushE(e,'invalid email')
+      }
+  }
+  if(e.name == 'pass'){
+    //console.log('pass');
+  }
+  if(e.name == 'passch'){
+    //console.log('passch');
+  }
+  //console.log(element);
+  if(result === true){
+    unpush(e)
+  }
+  //console.log(result, e.value);
+  return result
 }

@@ -25,6 +25,7 @@ body {
 	margin: 0 15px;
 	padding: 10px;
 	border-radius: 10px;
+	transition: background-color 0.25s ease-in;
 }
 
 .window>form{
@@ -41,19 +42,49 @@ body {
 	margin: 5px 50px;
 	padding: 3px;
 	color: inherit;
+	background-color: ghostwhite;
+	border: solid 3px aliceblue;
+	border-radius: 3px;
 }
 
-.log{
+.inp {
+  display: flex;
+  align-items: center;
+	justify-content: center;
+  position: relative;
+}
+.err {
+	font-size: 12px;
+	font-family: 'Courier New', monospace;
+	width: 200px;
+	height: 30px;
+	background-color: ghostwhite;
+	position: absolute;
+	left: 290px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	visibility: visible;
+	opacity: 0;
+	transition: opacity 0.25s ease-in;
+	border: 3px solid mediumslateblue;
+	border-radius: 3px;
+}
+
+
+.log:hover{
 	background-color: rgba(140, 90, 115, 0.9);
-	z-index: 1;
 }
-
 .reg{
-	background-color: rgba(74, 61, 92, 0.9);
 	border-top: 0;
 	margin-top: -15px;
 	z-index: 0;
 }
+
+.reg:hover{
+	background-color: rgba(74, 61, 92, 0.9);
+}
+
 
 @keyframes buttonBorder{
 	0% {}
@@ -77,7 +108,11 @@ body {
 	width: 217px;
 	margin: 5px 0 25px ;
 }
-
+.border-button:disabled{
+	border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #cccccc;
+}
 
 
 .reg .border-button:hover{
