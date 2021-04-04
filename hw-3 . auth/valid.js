@@ -4,61 +4,59 @@ logInput.addEventListener('input', updateValue)
 regInput.addEventListener('input', updateValue)
 let elements = document.getElementsByClassName('err')
 let buttons = document.getElementsByClassName('border-button')
-//console.log(elements);
-for(el in buttons){
+
+class InputInfo{
+  constructor(){
+    this.mod = '',
+    this.name = '',
+    this.email = '',
+    this.password = '',
+    this.password_check = ''
+  }
+  get_full(){
+    console.log(`mode: "${this.mod}"\nname: "${this.name}"\nemail: "${this.email}"
+    password: "${this.pass}"\npassword check: "${this.passch}"\n`);
+  }
+}
+
+
+function updateValue(element) {
+  const t = element.target
+  validate(t)
+}
+
+for(el in buttons){ // изначально выключаем кнопки
   try {
     buttons[el].disabled = true
   } catch{}
-
 }
 
-for(el in elements){
+for(el in elements){ // изначально прячем ошибки
   try {
     elements[el].style.visibility = 'hidden'
   } catch{}
 
 }
 
-function pushE(element, err){
-  element.nextElementSibling.style.visibility = 'visible'
-  element.nextElementSibling.style.opacity = '1'
-  element.nextElementSibling.textContent = err
-  result = false
+function pushE(element, err){ //показываем ошибки
+  if(element.value != ''){
+    element.nextElementSibling.style.visibility = 'visible'
+    element.nextElementSibling.style.opacity = '1'
+    element.nextElementSibling.textContent = err
+    result = false
+  }
 }
 
-function unpush(element){
-  //element.nextElementSibling.textContent = ''
+function unpush(element){ // убираем ошибки
   element.nextElementSibling.style.opacity = '0'
-  //element.nextElementSibling.style.visibility = 'hidden'
-
 }
 
-function updateValue(element) {
-  const t = element.target
-  //console.log(t.value, t.name)
-  validate(t)
-  //pushE(t,t.value)
-}
-
+let pass = ''
 function validate(e){
-  console.log('---');
   result = true
-  //empty inputs
-  console.log(e.nextElementSibling);
-  const inputs = []
-  for(let i = 0; i<(e.form.elements.length - 1); i++){
-    inputs.push(e.form.elements[i]?.value)
-  }
-  const empty = []
-  for(let i in inputs){
-    if(inputs[i] === ''){
-      pushE(e, 'empty')
-      //console.log('empty');
-    }
-  }
 
   function tooShortLong(e,f,l){
-    if(e.name == 'pass'){
+    if(e.name == 'pass' || e.name == 'passch' ){
       if(f === '>') return (e.value.length > 8)
       if(f === '<') return (e.value.length < 64)
     }
@@ -98,32 +96,57 @@ function validate(e){
   if(!tooShortLong(e,'>',3)){
     pushE(e,'too short')
   }
-
   if(typeof acceptChar(e,(e.name =='pass')) === 'string' ){
     pushE(e,`unaccepteble symbol: "${acceptChar(e, (e.name =='pass'))}"`);
   }
-  if(e.name == 'name' ){
 
 
-
-  }
   if(e.name == 'email'){
     let reg = /.+@.+\..+/
     if(e.value.match(reg) === null){
         pushE(e,'invalid email')
       }
   }
-  let pass = ''
+
   if(e.name == 'pass'){
     pass = e.value
   }
   if(e.name == 'passch'){
-    console.log(e.value == pass);
+    if(e.value !== pass){
+      pushE(e, 'check passwors')
+    }
   }
-  //console.log(element);
+
+  const inputs = [] // проверка на пустые поля
+  let empty = false
+  for(let i = 0; i<(e.form.elements.length - 1); i++){
+    inputs.push(e.form.elements[i]?.value)
+  }
+  for(let i in inputs){
+    if(inputs[i] === ''){
+      empty = true
+    }
+  }
+
   if(result === true){
     unpush(e)
   }
-  //console.log(result, e.value);
+  if (result === true && !empty){
+    e.form[e.form.length - 1].disabled = false
+  } else {
+    result = false
+    e.form[e.form.length - 1].disabled = true
+  }
+
+  if(result === true){
+    let info = new InputInfo
+    info.mod = e.form.name
+    if(e.name == 'nick'){info.name = e.value}
+    if(e.name == 'email'){info.email = e.value}
+    if(e.name == 'pass'){info.password = e.value}
+    if(e.name == 'passch'){info.password_check = e.value == info.password}
+    console.log(info);
+  }
+  console.log(result);
   return result
 }
