@@ -37,7 +37,7 @@ body {
 }
 
 
-.window>form input{
+input{
 	width: 200px;
 	margin: 5px 50px;
 	padding: 3px;
@@ -45,6 +45,13 @@ body {
 	background-color: ghostwhite;
 	border: solid 3px aliceblue;
 	border-radius: 3px;
+}
+
+input:disabled{
+	border: 1px solid #cccccc;
+	box-shadow: 0px;
+  background-color: #cccccc;
+  color: gray;
 }
 
 .inp {
@@ -111,9 +118,10 @@ body {
 	margin: 5px 0 25px ;
 }
 .border-button:disabled{
-	border: 1px solid #999999;
+	border: 1px solid #cccccc;
+	box-shadow: 0px;
   background-color: #cccccc;
-  color: #cccccc;
+  color: black;
 }
 
 
