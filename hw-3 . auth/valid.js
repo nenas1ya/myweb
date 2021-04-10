@@ -51,8 +51,8 @@ function unpush(element){ // убираем ошибки
   element.nextElementSibling.style.opacity = '0'
 }
 
-let pass = ''
-let info = new InputInfo
+let pass = '';
+let info = new InputInfo;
 function validate(e){
   result = true
 
