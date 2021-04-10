@@ -51,8 +51,12 @@ function unpush(element){ // убираем ошибки
   element.nextElementSibling.style.opacity = '0'
 }
 
+<<<<<<< HEAD
 let pass = '';
 let info = new InputInfo;
+=======
+let pass = ''
+>>>>>>> 3419076069b15e160fc746a624a5a3c31e833718
 function validate(e){
   result = true
 
@@ -97,8 +101,13 @@ function validate(e){
   if(!tooShortLong(e,'>',3)){
     pushE(e,'too short')
   }
+<<<<<<< HEAD
   if(typeof acceptChar(e,(e.name ==='pass')) === 'string' ){
     pushE(e,`unaccepteble symbol: "${acceptChar(e, (e.name ==='pass'))}"`);
+=======
+  if(typeof acceptChar(e,(e.name =='pass')) === 'string' ){
+    pushE(e,`unaccepteble symbol: "${acceptChar(e, (e.name =='pass'))}"`);
+>>>>>>> 3419076069b15e160fc746a624a5a3c31e833718
   }
 
 
@@ -109,10 +118,17 @@ function validate(e){
       }
   }
 
+<<<<<<< HEAD
   if(e.name === 'pass'){
     pass = e.value
   }
   if(e.name === 'passch'){
+=======
+  if(e.name == 'pass'){
+    pass = e.value
+  }
+  if(e.name == 'passch'){
+>>>>>>> 3419076069b15e160fc746a624a5a3c31e833718
     if(e.value !== pass){
       pushE(e, 'check passwors')
     }
@@ -140,6 +156,7 @@ function validate(e){
   }
 
   if(result === true){
+<<<<<<< HEAD
 
     info.mod = e.form.name
     if(e.name === 'nick'){info.name = e.value}
@@ -148,5 +165,16 @@ function validate(e){
     if(e.name === 'passch'){info.password_check = (e.value == info.password)}
     console.log(info);
   }
+=======
+    let info = new InputInfo
+    info.mod = e.form.name
+    if(e.name == 'nick'){info.name = e.value}
+    if(e.name == 'email'){info.email = e.value}
+    if(e.name == 'pass'){info.password = e.value}
+    if(e.name == 'passch'){info.password_check = e.value == info.password}
+    console.log(info);
+  }
+  console.log(result);
+>>>>>>> 3419076069b15e160fc746a624a5a3c31e833718
   return result
 }
