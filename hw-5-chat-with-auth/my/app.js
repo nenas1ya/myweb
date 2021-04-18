@@ -1,14 +1,25 @@
 import express from 'express'
 import path from 'path'
+import pug from 'pug'
+import {collor, requestTime} from "./midleware.js"
 
 const app = express(),
-      port = process.env.PORT || 1337
+      port = process.env.PORT || 1337,
+      __dirname = path.resolve()
 
-const __dirname = path.resolve()
+
+app.use(express.static(path.resolve(__dirname,'public')))
+app.set('view engine','pug')
+app.set('views', './views')
+
+app.use(requestTime)
+app.use(collor)
 
 app.get('/', (req, res) => {
-    res.sendFile(path.resolve(__dirname,'public','index.html'))
+    res.render('index', {title: 'hi', 'name': 'u sus'})
 })
+
 app.listen(port, ()=>{
-    console.log(`\n\nServer start on ${port} port...`)
+    let date = new Date()
+    console.log(`\n\n\t${date.getHours()}.${date.getMinutes()}.${date.getSeconds()} : Server start on http://localhost:${port}...`)
 })
