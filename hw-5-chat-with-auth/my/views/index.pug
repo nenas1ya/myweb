@@ -1,17 +1,15 @@
+
 html
     head
         style
             include style.css
-        title= 'Chat'
+        title= 'Socket Chat'
     body
-        .container
-            ul.text-area
-                li 1
-                li 2
-            .input-area
+        ul#messages
+        form#form(action="")
+            input#input(autocomplete="off")
+            button send
 
-                .name [chat #{name}]
-                input(placeholder='...')
-            .line
-                //form
-                  button.send-btn
+    script(src="/socket.io/socket.io.js")
+    script(src="../client.js")
+
